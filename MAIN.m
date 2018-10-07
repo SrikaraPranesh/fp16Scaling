@@ -20,7 +20,7 @@ Main_SimpleScaling;
 Main_DiagonalScaling;
 Main_Rank1Scaling;
 condition_number;
-DiagFailExample;
+diagonal_scaling_fail;
 
 
 movefile('*.txt','results')
