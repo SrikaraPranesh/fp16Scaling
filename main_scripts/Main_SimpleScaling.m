@@ -26,38 +26,38 @@ load test_mat.mat
 
 
 
-%%% prec_set=1 is (half,single,double) in GMRES-IR
-%%% prec_set=2 is (half,double,quad  ) in GMRES-IR
-prec_set=[1;2];
+%%% prec_set = 1 is (half,single,double) in GMRES-IR
+%%% prec_set = 2 is (half,double,quad  ) in GMRES-IR
+prec_set = [1;2];
 
 
 %%% theta -- Headroom to prevent overflow
 %%% mu -- Room to prevent underflow
-theta=0.1;
-mu=1;
+theta = 0.1;
+mu = 1;
 
-%%% scale=11 Performs scaling using Algorithm 2.1
-%%% scale=12 Performs scaling using Algorithm 2.2.
-%%% scale=2  Performs scaling using just algorithm 2.3.
-%%% scale=3 Performs scaling using algorithm 3.2
-Scale=[11;12] ;
+%%% scale = 11 Performs scaling using Algorithm 2.1
+%%% scale = 12 Performs scaling using Algorithm 2.2.
+%%% scale = 2  Performs scaling using just algorithm 2.3.
+%%% scale = 3 Performs scaling using algorithm 3.2
+Scale = [11;12] ;
 
 
-%%% flag=1 performs diagonal scaling in Algorithm 3.2
-%%% flag=0 no diagonal scaling in Algorithm 3.2
-flag=0  ;
+%%% flag = 1 performs diagonal scaling in Algorithm 3.2
+%%% flag = 0 no diagonal scaling in Algorithm 3.2
+flag = 0  ;
 
 
 %%% Total number iterative refinement iterations
-maxit=10;
+maxit = 10;
 
-%%% dscale=1, uses Algorithm 2.4 as diagonal scaling in either Algorithm
+%%% dscale = 1, uses Algorithm 2.4 as diagonal scaling in either Algorithm
 %%%           2.3 or Algorithm 3.2
-%%% dscale=2, uses Algorithm 2.5 as diagonal scaling in either Algorithm
+%%% dscale = 2, uses Algorithm 2.5 as diagonal scaling in either Algorithm
 %%%           2.3 or Algorithm 3.2
-%%% dscale=3, uses Algorithm 2.6 as diagonal scaling in either Algorithm
+%%% dscale = 3, uses Algorithm 2.6 as diagonal scaling in either Algorithm
 %%%           2.3 or Algorithm 3.2
-dscale=1;
+dscale = 1;
 
 for prec = 1:2
     
@@ -67,20 +67,18 @@ for prec = 1:2
             load(test_mat{i,1});  %%% Load the required matrix
             
             if (prec_set(prec,1)==1)
-                A=Problem.A;
-                A=single(full(A));
-                n=length(A);
-                lm(i,1)=n;
-                b=single(randn(n,1));
+                A = Problem.A;
+                A = single(full(A));
+                n = length(A);
+                lm(i,1) = n;
+                b = single(randn(n,1));
             else
-                A=Problem.A;
-                A=(full(A));
-                n=length(A);
-                lm(i,1)=length(A);
-                b=(randn(n,1));
+                A = Problem.A;
+                A = (full(A));
+                n = length(A);
+                lm(i,1) = length(A);
+                b = (randn(n,1));
             end
-            
-            xact=A\b;
             
             [x,gmresits{prec,alg}(i,:),irits{prec,alg}(i,:),Cnumber{prec,alg}(i,:)] =... 
                                             Scale64To16_Solve(A,b,prec_set(prec,1)...
@@ -96,8 +94,9 @@ end
 %%%%%%% PRINT THE LATEX TABLE INTO A FILE %%%%%%%
 
 % creating a text file to print the GMRES iteration table
-fid1=fopen('SimpleScalingResult.txt','w');
-for i=1:length(test_mat)
+fid1 = fopen('SimpleScalingResult.txt','w');
+fprintf(fid1,'Number of GMRES iteration ')
+for i = 1:length(test_mat)
     fprintf(fid1,'%d & %d & %d & %d & %d\\\\ \n',i,...
     gmresits{1,1}(i,1),gmresits{1,2}(i,1),gmresits{2,1}(i,1),gmresits{2,2}(i,1));
 end

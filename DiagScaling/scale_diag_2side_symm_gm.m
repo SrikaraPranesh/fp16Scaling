@@ -1,6 +1,6 @@
 function [A,D1,D2,its] = scale_diag_2side_symm_gm(A,tol,prnt)
 %SCALE_DIAG_2SIDE_SYMM_GM Symmetry-preserving two-sided GM diagonal scaling.
-%   [B,d1,d2,its] = scale_diag_2side_symm_gm(A,TOL) computes B = D1*A_D2,
+%   [B,D1,D2,its] = scale_diag_2side_symm_gm(A,TOL) computes B = D1*A_D2,
 %   where the diagonal matrices D1 = inv(diag(d1)) and D2 = inv(diag(d2))
 %   are built from approximations to the geoemtic means of rows and
 %   columns.  The scaling is symmetry-preserving.

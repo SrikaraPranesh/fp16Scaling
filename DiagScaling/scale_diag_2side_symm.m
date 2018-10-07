@@ -1,6 +1,6 @@
 function [A,D1,D2,its] = scale_diag_2side_symm(A,tol,prnt)
 %SCALE_DIAG_2SIDE_SYMM Symmetry-preserving two-sided diagonal scaling.
-%   [B,d1,d2,its] = scale_diag_2side_symm(A,TOL,PRNT) computes
+%   [B,D1,D2,its] = scale_diag_2side_symm(A,TOL,PRNT) computes
 %   B = D1*A_D2 where the diagonal matrices D1 = inv(diag(d1))
 %    and D2 = inv(diag(d2)) are chosen
 %   so that the largest elements in absolute value in every row and every

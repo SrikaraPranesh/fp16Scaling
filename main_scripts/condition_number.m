@@ -1,16 +1,12 @@
-%%%%%% This script computes the condition number of the scaled matrix and
-%%%%%% measures its effectiveness as a preconditioner by computing the
-%%%%%% condition number of the preconditioned matrix.
+% This script computes the condition number of the scaled matrix and
+% measures its effectiveness as a preconditioner by computing the
+% condition number of the preconditioned matrix.
 
 clear all; close all;
 
 
-rank1_type=1;
-addpath('matrices_for_testing')
-addpath('GMRES_IR')
-addpath('DiagScaling')
-addpath('Scaling_Algorithms')
-addpath('Misc_Scripts')
+rank1_type = 1;
+
 rng(1);
 
 %%% Matlab file containing all the test matrices
@@ -20,23 +16,23 @@ load test_mat.mat
 
 %%% prec_set=1 is (half,single,double) in GMRES-IR
 %%% prec_set=2 is (half,double,quad  ) in GMRES-IR
-prec_set=[1;2];
+prec_set = [1;2];
 
 %%% theta -- Headroom to prevent overflow
 %%% mu -- Room to prevent underflow
-theta=0.1;
-mu=1;
+theta = 0.1;
+mu = 1;
 
 %%% scale=11 Performs scaling using Algorithm 2.1
 %%% scale=12 Performs scaling using Algorithm 2.2.
 %%% scale=2  Performs scaling using just algorithm 2.3.
 %%% scale=3 Performs scaling using algorithm 3.2
-Scale=3;
+Scale = 3;
 
 
 %%% flag=1 performs diagonal scaling in Algorithm 3.2
 %%% flag=0 no diagonal scaling in Algorithm 3.2
-flag=[0;1];
+flag = [0;1];
 
 %%% dscale=1, uses Algorithm 2.4 as diagonal scaling in either Algorithm
 %%%           2.3 or Algorithm 3.2
@@ -44,44 +40,44 @@ flag=[0;1];
 %%%           2.3 or Algorithm 3.2
 %%% dscale=3, uses Algorithm 2.6 as diagonal scaling in either Algorithm
 %%%           2.3 or Algorithm 3.2
-dscale=[1;2;3];
+dscale = [1;2;3];
 
 
 %%%%% condtion number of diagonal scaling algorithms
 for prec = 1:2
     for alg = 1:2
-        for i=1:length(test_mat)
+        for i = 1:length(test_mat)
             
             fprintf('Diagonal scaling part | Matrix %d | Algorithm %d | Precisin %d \n',i,alg,prec);
             
             load(test_mat{i,1});  %%% Load the required matrix
             if (prec_set(prec,1) == 1)
-                A=Problem.A;
-                A=single(full(A));
+                A = Problem.A;
+                A = single(full(A));
                 A = single(A);
-                n=length(A);
-                b=single(randn(n,1));
-                u = eps('single');
+                n = length(A);
+                b = single(randn(n,1));
+                u  =  eps('single');
                 [u1,rmins,rmin,rmax,p] = ieee_params('h');
                 rmax2 = single(rmax)*single(theta);
             else
-                A=Problem.A;
-                A=single(full(A));
-                n=length(A);
-                b=(randn(n,1));
+                A = Problem.A;
+                A = single(full(A));
+                n = length(A);
+                b = (randn(n,1));
                 u = eps('double');
                 [u1,rmins,rmin,rmax,p] = ieee_params('h');
                 rmax2 = rmax*theta;
             end
             
-            Cnumber{prec,alg}(i,1)=cond(A,inf);
+            Cnumber{prec,alg}(i,1) = cond(A,inf);
             [ A,b,R,C ] = Diagonal_Scaling( A,b,dscale(alg,1),rmax2 );
-            Cnumber{prec,alg}(i,2)=cond(A,inf);
-            B=double(fp16(A));
-            Cnumber{prec,alg}(i,3)=cond(B,inf);
+            Cnumber{prec,alg}(i,2) = cond(A,inf);
+            B = double(fp16(A));
+            Cnumber{prec,alg}(i,3) = cond(B,inf);
             [L,U,P] = lu(B);
             LL = fp16(double(P')*double(L));
-            U=fp16(U);
+            U = fp16(U);
             At = double((double(U))\((double(L))\((double(P))*(double(A)))));
             Cnumber{prec,alg}(i,4) = cond((double(At)),'inf');
             

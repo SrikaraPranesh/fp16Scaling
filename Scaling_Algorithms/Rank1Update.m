@@ -1,8 +1,18 @@
-function [ C,b,alpha,beta,C1,R] = Rank1Update( A,b,theta,flag,dscale,rank1_type)
-% This function performs diagonal scaling using
-% Algorithm 3.2.
+function [ C,b,alpha,beta,C1,R] = Rank1Update( A,b,theta,flag,dscale,rank1_type,mu)
+% Performs diagonal scaling followed by rank-1 variant of
+%scaling.
 % A -- Input matrix.
 % theta -- 0 < theta <= 1 headroom to prevent overflow.
+% b - Right hand side vector
+% flag - 1 if diagonal scaling is required.
+% dscale - Type of diagonal scaling required
+% rank1_type1 - Type of rank1 scaling
+% mu - mu >=1 or 0 to modify the lower limit of scaled matrix.
+% C - Input Matrix
+% C1 - Column Scaling diagonal matrix
+% R - Row scaling diagonal matrix 
+% alpha, beta - Scaling constants
+
 
 n = length(A);
 %%% Equilibriate the matrix
@@ -22,7 +32,7 @@ end
 
 if (rank1_type==1)
     rmax2 = rmax*theta;  % Allow some headroom.
-    rmin2 = rmin*10;  % Allow some headroom.
+    rmin2 = rmin*mu;  % Allow some headroom.
     AA = abs(A);
     xmax = max(AA(:));
     xmin = min(AA(:)) ;
@@ -37,7 +47,7 @@ else
     C = alpha*A + beta*ones(n);
 end
 
-b=R*b;
+b = R*b;
 
 end
 

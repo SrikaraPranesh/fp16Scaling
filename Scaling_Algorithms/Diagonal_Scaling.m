@@ -15,10 +15,10 @@ elseif (dscale==2)
 elseif (dscale==3)
     [A,R,C] = scale_diag_2side_symm_gm(A);
 end
-beta=max(max(A));
-mu=rmax2/beta;
-A=mu*A;
-b=mu*R*b;
+beta = max(max(A));
+mu = rmax2/beta;
+A = mu*A;
+b = mu*R*b;
 
 end
 
