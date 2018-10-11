@@ -21,7 +21,7 @@ prec_set = [1;2];
 %%% theta -- Headroom to prevent overflow
 %%% mu -- Room to prevent underflow
 theta = 0.1;
-mu = 1;
+mu = 10;
 
 %%% scale=11 Performs scaling using Algorithm 2.1
 %%% scale=12 Performs scaling using Algorithm 2.2.
@@ -114,7 +114,7 @@ for prec = 1:2
             end
             
             rank1_type=1;
-            [ C,b,alpha,beta,C1] = Rank1Update( A,b,theta,flag(alg,1),dscale(1,1),rank1_type);
+            [ C,b,alpha,beta,C1] = Rank1Update( A,b,theta,flag(alg,1),dscale(1,1),rank1_type,mu);
             Cnumber1{prec,alg}(i,1) = cond(A,inf);
             Cnumber1{prec,alg}(i,2) = cond(C,inf);
             B = double(fp16(C));
