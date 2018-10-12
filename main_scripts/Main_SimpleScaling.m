@@ -95,7 +95,15 @@ end
 
 % creating a text file to print the GMRES iteration table
 fid1 = fopen('SimpleScalingResult.txt','w');
-fprintf(fid1,'Number of GMRES iteration ')
+fprintf(fid1,'Alg 1 is the algorithm where overflow number are mappex to xmax \n');
+fprintf(fid1,'Alg 2 is the algorithm where we divide the number by xmax \n');
+fprintf(fid1,'Column 1 -- Matrix index \n');
+fprintf(fid1,'Column 2 -- Alg 1 (half,single,double)\n');
+fprintf(fid1,'Column 3 -- Alg 2 (half,single,double)\n');
+fprintf(fid1,'Column 4 -- Alg 1 (half, double, quad)\n');
+fprintf(fid1,'Column 5 -- Alg 2 (half, double, quad)\n');
+fprintf(fid1,'\n'); fprintf(fid1,'\n');
+fprintf(fid1,'Number of GMRES iteration ');
 for i = 1:length(test_mat)
     fprintf(fid1,'%d & %d & %d & %d & %d\\\\ \n',i,...
     gmresits{1,1}(i,1),gmresits{1,2}(i,1),gmresits{2,1}(i,1),gmresits{2,2}(i,1));

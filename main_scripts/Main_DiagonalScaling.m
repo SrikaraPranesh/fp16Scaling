@@ -92,6 +92,10 @@ end
 
 % creating a text file to print the GMRES iteration table
 fid1 = fopen('DiagonalScalingResult.txt','w');
+fprintf(fid1,'Column 1 is matrix id \n');
+fprintf(fid1,'Column 2 is non symmetric diagonal scaling \n');
+fprintf(fid1,'Column 3 is symmetric diagonal scaling \n');
+fprintf(fid1,'\n'); fprintf(fid1,'\n');
 fprintf(fid1,'Number of GMRES iterations for (half,single,double) precisions combination \n');
 for i = 1:length(test_mat)
     t1  =  gmresits{1,1}(i,1); t2 = gmresits{1,2}(i,1);

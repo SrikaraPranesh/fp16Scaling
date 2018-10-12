@@ -134,7 +134,9 @@ end
 
 fid1=fopen('Condition_number.txt','w');
 
-
+fprintf(fid1,'algorithm 1 -- Un Symmetric diagonal scaling \n');
+fprintf(fid1,'algorithm 2 -- Symmetric diagonal scaling \n');
+fprintf(fid1,'\n'); fprintf(fid1,'\n');
 
 for prec = 1:2
     for alg = 1:2
@@ -149,6 +151,10 @@ for prec = 1:2
         fprintf(fid1,'\n'); fprintf(fid1,'\n');
     end
 end
+
+fprintf(fid1,'algorithm 1 -- Without diagonal scaling \n');
+fprintf(fid1,'algorithm 2 -- With diagonal scaling \n');
+fprintf(fid1,'\n'); fprintf(fid1,'\n');
 
 for prec = 1:2
     for alg = 1:2
