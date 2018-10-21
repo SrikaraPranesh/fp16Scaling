@@ -129,7 +129,7 @@ while ~cged
     %Compute size of errors, quantities in bounds
     res = double(b1) - double(A1)*double(x1);
     nbe(iter+1) = double(norm(mp(res,34),'inf')/(norm(mp(double(A1),34),'inf')*norm(mp(double(x1),34),'inf')+ norm(mp(double(b1),34),'inf')));
-
+    nbe(iter+1)=nbe(iter+1)/length(b1);
     
     iter = iter + 1;
     if iter > iter_max, break, end

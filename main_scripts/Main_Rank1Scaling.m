@@ -15,7 +15,7 @@
 clear all;close all;
 
 
-rank1_type = 1;
+rank1_type = 2;
 addpath('matrices_for_testing')
 addpath('GMRES_IR')
 addpath('DiagScaling')

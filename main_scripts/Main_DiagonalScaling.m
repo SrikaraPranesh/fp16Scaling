@@ -82,7 +82,7 @@ for prec = 1:2
                 Scale64To16_Solve(A,b,prec_set(prec,1)...
                 ,maxit,theta,Scale,flag,dscale(alg,1));
             res = double(b) - double(A)*double(x);
-            nbe{prec,alg}(i,1) = double(norm(mp(res,34),'inf')/(norm(mp(double(A),34),'inf')*norm(mp(double(x),34),'inf')+ norm(mp(double(b),34),'inf')));
+            nbe{prec,alg}(i,1) = double(norm(mp(res,34),'inf')/(length(res)*(norm(mp(double(A),34),'inf')*norm(mp(double(x),34),'inf')+ norm(mp(double(b),34),'inf'))));
         end  
     end
 end
@@ -93,40 +93,46 @@ end
 % creating a text file to print the GMRES iteration table
 fid1 = fopen('DiagonalScalingResult.txt','w');
 fprintf(fid1,'Column 1 is matrix id \n');
-fprintf(fid1,'Column 2 is non symmetric diagonal scaling \n');
-fprintf(fid1,'Column 3 is symmetric diagonal scaling \n');
+fprintf(fid1,'Columns 2 and 4 are non symmetric diagonal scaling \n');
+fprintf(fid1,'Column 3 and 5 are symmetric diagonal scaling \n');
 fprintf(fid1,'\n'); fprintf(fid1,'\n');
-fprintf(fid1,'Number of GMRES iterations for (half,single,double) precisions combination \n');
+fprintf(fid1,'Number of GMRES iterations \n');
+fprintf(fid1,'Column 2 and 3 are (half,single,double)\n');
+fprintf(fid1,'Column 3 and 4 are (half,double,quad)\n');
 for i = 1:length(test_mat)
     t1  =  gmresits{1,1}(i,1); t2 = gmresits{1,2}(i,1);
-    fprintf(fid1,'%d & %d & %d \\\\ \n',i,...
-        t1,t2);
+    t3  =  gmresits{2,1}(i,1); t4 = gmresits{2,2}(i,1);
+    fprintf(fid1,'%d & %d & %d & %d & %d\\\\ \n',i,...
+        t1,t2,t3,t4);
 end
+% fprintf(fid1,'\n');
+% fprintf(fid1,'\n');
+% fprintf(fid1,'Number of GMRES iterations for (half,double,quad) precisions combination \n');
+% for i = 1:length(test_mat)
+%     t1 = gmresits{2,1}(i,1); t2 = gmresits{2,2}(i,1);
+%     fprintf(fid1,'%d & %d & %d\\\\ \n',i,...
+%         t1,t2);
+% end
 fprintf(fid1,'\n');
 fprintf(fid1,'\n');
-fprintf(fid1,'Number of GMRES iterations for (half,double,quad) precisions combination \n');
-for i = 1:length(test_mat)
-    t1 = gmresits{2,1}(i,1); t2 = gmresits{2,2}(i,1);
-    fprintf(fid1,'%d & %d & %d\\\\ \n',i,...
-        t1,t2);
-end
-fprintf(fid1,'\n');
-fprintf(fid1,'\n');
-fprintf(fid1,'backward errors Single precision \n');
+fprintf(fid1,'backward errors \n');
+fprintf(fid1,'Columns 2 and 3 are (half,single,double) \n');
+fprintf(fid1,'Columns 4 and 5 are (half,double,quad) \n');
 for i = 1:length(test_mat)
     t1 = nbe{1,1}(i,1); t2 = nbe{1,2}(i,1);
-    fprintf(fid1,'%d & %6.2e & %6.2e \\\\ \n',i,...
-        t1,t2);
+    t3 = nbe{2,1}(i,1); t4 = nbe{2,2}(i,1);
+    fprintf(fid1,'%d & %6.2e & %6.2e & %6.2e & %6.2e\\\\ \n',i,...
+        t1,t2,t3,t4);
 end
 
-fprintf(fid1,'\n');
-fprintf(fid1,'\n');
-fprintf(fid1,'backward errors double precision\n');
-for i = 1:length(test_mat)
-    t1 = nbe{2,1}(i,1); t2 = nbe{2,2}(i,1);
-    fprintf(fid1,'%d & %6.2e & %6.2e\\\\ \n',i,...
-        t1,t2);
-end
+% fprintf(fid1,'\n');
+% fprintf(fid1,'\n');
+% fprintf(fid1,'backward errors double precision\n');
+% for i = 1:length(test_mat)
+%     t1 = nbe{2,1}(i,1); t2 = nbe{2,2}(i,1);
+%     fprintf(fid1,'%d & %6.2e & %6.2e\\\\ \n',i,...
+%         t1,t2);
+% end
 
 fclose(fid1);
 

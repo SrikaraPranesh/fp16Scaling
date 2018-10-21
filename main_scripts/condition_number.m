@@ -138,18 +138,16 @@ fprintf(fid1,'algorithm 1 -- Un Symmetric diagonal scaling \n');
 fprintf(fid1,'algorithm 2 -- Symmetric diagonal scaling \n');
 fprintf(fid1,'\n'); fprintf(fid1,'\n');
 
-for prec = 1:2
-    for alg = 1:2
-        
+for prec = 1:2        
         fprintf(fid1,'Condition numbers diagonal scaling algorithm %d for precision %d \n',alg,prec);
         for i=1:length(test_mat)
-            t1 = Cnumber{prec,alg}(i,1); t2 = Cnumber{prec,alg}(i,2);
-            t3 = Cnumber{prec,alg}(i,3); t4 = Cnumber{prec,alg}(i,4);
-            fprintf(fid1,'%d & %6.2e & %6.2e & %6.2e\\\\ \n',i,...
-                t2,t3,t4);
+            t1 = Cnumber{prec,1}(i,1); t2 = Cnumber{prec,1}(i,2);
+            t4 = Cnumber{prec,1}(i,4); t5 = Cnumber{prec,2}(i,2);
+            t6 = Cnumber{prec,2}(i,4);
+            fprintf(fid1,'%d & %6.2e & %6.2e  %6.2e & %6.2e\\\\ \n',i,...
+                t2,t4,t5,t6);
         end
         fprintf(fid1,'\n'); fprintf(fid1,'\n');
-    end
 end
 
 fprintf(fid1,'algorithm 1 -- Without diagonal scaling \n');

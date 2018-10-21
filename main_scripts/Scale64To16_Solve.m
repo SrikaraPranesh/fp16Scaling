@@ -62,10 +62,10 @@ elseif (Scale==2)
     bInf = norm(b,'inf');
     b1 = b/bInf;
     if (Cnumber(1,3) <= (1e20) )
-%         [x,gmresits,irits]=gmresir3_2(double(A),double(b1),0,wp,rp,maxit,...
-%             tol,A_orig,b_orig,C,bInf);
-        [x,gmresits,irits] = gmresir3(double(A),double(b1),0,wp,rp,maxit,tol);
-        x = bInf*C*x;
+        [x,gmresits,irits]=gmresir3_2(double(A),double(b1),0,wp,rp,maxit,...
+            tol,A_orig,b_orig,C,bInf);
+%         [x,gmresits,irits] = gmresir3(double(A),double(b1),0,wp,rp,maxit,tol);
+%         x = bInf*C*x;
     else
         x = zeros(length(b),1);
         gmresits = Inf;
@@ -75,7 +75,7 @@ elseif (Scale==2)
 elseif (Scale==3)
     %%% Performs scaling using algorithm 3.2, further
     %%% algorithm 2.3 can also be used.
-    rank1_type = 1;
+    rank1_type = 2;
     [ C,b,alpha,beta,C1] = Rank1Update( A,b,theta,flag,dscale,rank1_type,mu);
     Cnumber(1,1) = cond(A,inf);
     Cnumber(1,2) = cond(C,inf);

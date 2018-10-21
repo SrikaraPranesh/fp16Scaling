@@ -18,9 +18,12 @@ addpath('main_scripts')
 
 Main_SimpleScaling;
 Main_DiagonalScaling;
-Main_Rank1Scaling;
 condition_number;
-diagonal_scaling_fail;
+
+% 
+% Main_Rank1Scaling;
+% condition_number;
+% diagonal_scaling_fail;
 
 
 movefile('*.txt','results')
