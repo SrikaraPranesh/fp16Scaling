@@ -16,4 +16,8 @@ an Application to Solving Linear Systems
 * This code requires Cleve Laboratory to perform half precision computations and 
 Advanpix Multiprecision Computing Toolbox for extended precision computations. 
 A free trial of Advanpix is available for download from https://www.advanpix.com/.
+
+## Contributers
+* Srikara Pranesh
+* Nicholas. J. Higham 
   
