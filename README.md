@@ -4,8 +4,8 @@ into fp16, and using the scaled matrix to solve system
 of linear equations using GMRES based iterative refinement.
 
 ## Related publications
-* N. J. Higham, S. Pranesh, M. Zounon. [Squeezing a Matrix Into Half Precision, with 
-an Application to Solving Linear Systems]
+* N. J. Higham, S. Pranesh, M. Zounon. Squeezing a Matrix Into Half Precision, with 
+an Application to Solving Linear Systems
 
 ## Main Execution file
 * **_MAIN.m_** Generates all the tables in the manuscript into the folder results/.
