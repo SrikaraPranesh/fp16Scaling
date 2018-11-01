@@ -1,12 +1,8 @@
 function [ A,b,R,C ] = Diagonal_Scaling( A,b,dscale,rmax2 )
-% This function performs the scaling as enumerate in
-% algorithm 2.3.
-% A - The input matrix
-%%% Performs diagonal scaling using either
-%%% Algorithm 2.4 or 2.5.
-%%% dscale = 1 -- Algorithm 2.4
-%%% dscale = 2 -- Algorithm 2.5
-%%% dscale = 3 -- Algorithm 2.6
+%DIAGONAL_SCALING Performs diagonal scaling and multiplies by 
+%(theta_max X xmax)
+
+global mu_flag;
 
 if (dscale==1)
     [A,R,C] = scale_diag_2side(A);
@@ -17,6 +13,10 @@ elseif (dscale==3)
 end
 beta = max(max(A));
 mu = rmax2/beta;
+
+if (mu_flag == 1)
+   mu = 1; 
+end
 A = mu*A;
 b = mu*R*b;
 

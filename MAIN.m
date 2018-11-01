@@ -4,8 +4,8 @@
 % S. Pranesh, and M. Zounon"
 
 
-% On the mac book of S.Pranesh the code would usually
-% take around 45 minutes for complete execution.
+% On the laptop which was used for numerical experiments
+% the execution of the code takes around 90 minutes.
 
 clear all; close all
 addpath('matrices_for_testing')
@@ -14,16 +14,13 @@ addpath('DiagScaling')
 addpath('Scaling_Algorithms')
 addpath('Misc_Scripts')
 addpath('main_scripts')
+addpath('all_suitable_SuitSparse_Matrices')
 
 
 Main_SimpleScaling;
 Main_DiagonalScaling;
 condition_number;
-
-% 
-% Main_Rank1Scaling;
-% condition_number;
-% diagonal_scaling_fail;
+Underflow_Percentage
 
 
 movefile('*.txt','results')

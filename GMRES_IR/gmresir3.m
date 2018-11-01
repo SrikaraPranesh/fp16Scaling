@@ -1,4 +1,4 @@
-function [x,reqits,iter] = gmresir3(A,b,precf,precw,precr,iter_max,gtol)
+function [x1,reqits,iter] = gmresir3(A,b,precf,precw,precr,iter_max,gtol,A1,b1,C,bInf)
 %GMRESIR3  GMRES-based iterative refinement in three precisions.
 %     x = gmresir3(A,b,precf,precw,precr,iter_max,gtol) solves Ax = b using gmres-based
 %     iterative refinement with at most iter_max ref. steps and GMRES convergence
@@ -83,7 +83,6 @@ else
     [L,U,P] = lu(B);
     LL = fp16(double(P')*double(L));
     U=fp16(U);
-    b1=b/norm(b,'inf');
     x =  U\(L\(P*fp16(b)) );
     x =  norm(b,'inf')*double(x);
 end
@@ -100,16 +99,20 @@ condA = norm(abs(inv(mp(double(A),34)))*abs(mp(double(A),34)),'inf');
 %If so, default to using 0 as initial solution
 if sum(isinf(single(x)))>0
     x =  zeros(size(b,1),1);
+    x1=C*bInf*x;
     fprintf('**** Warning: x0 contains Inf. Using 0 vector as initial solution.\n')
 end
 
 %Store initial solution in working precision
 if precw == 0
     x = fp16(x);
+    x1=bInf*C*x;
 elseif precw == 2
     x = double(x);
+    x1=bInf*C*x;
 else
     x = single(x);
+    x1=bInf*C*x;
 end
 
 cged = false;
@@ -124,40 +127,16 @@ gmreserr = [];
 while ~cged
     
     %Compute size of errors, quantities in bounds
-    ferr(iter+1) = double(norm(mp(double(x),34)-mp(xact,34),'inf')/norm(mp(xact,34),'inf'));
-    mu(iter+1) = norm(double(A)*(mp(double(x),34)-mp(xact,34)),'inf')/(norm(mp(double(A),34),'inf')*norm(mp(double(x),34)-mp(xact,34),'inf'));
-    res = double(b) - double(A)*double(x);
-    nbe(iter+1) = double(norm(mp(res,34),'inf')/(norm(mp(double(A),34),'inf')*norm(mp(double(x),34),'inf')+ norm(mp(double(b),34),'inf')));
-    temp = double( abs(mp(res,34)) ./ (abs(mp(double(A),34))*abs(mp(double(x),34)) + abs(mp(double(b),34))) );
-    temp(isnan(temp)) = 0; % Set 0/0 to 0.
-    cbe(iter+1) = max(temp);
+    res = double(b1) - double(A1)*double(x1);
+    nbe(iter+1) = double(norm(mp(res,34),'inf')/(norm(mp(double(A1),34),'inf')*norm(mp(double(x1),34),'inf')+ norm(mp(double(b1),34),'inf')));
+    nbe(iter+1)=nbe(iter+1)/length(b1);
     
     iter = iter + 1;
     if iter > iter_max, break, end
     
     %Check convergence
 %     if max([ferr(iter) nbe(iter) cbe(iter)]) <= u, break, end
-    if max([ nbe(iter) ]) <= (u), break, end
-    
-    % Check for stagnation
-    if (iter >=2)
-        
-        fes=abs(ferr(iter)-ferr(iter-1));
-        nbs=abs(nbe(iter)-nbe(iter-1));
-        cbs=abs(cbe(iter)-cbe(iter-1));
-        if (max([fes nbs cbs]) < u)
-            if (sflag==1)
-                fprintf('GMRES-IR has stagnated \n')
-                fprintf('Forward error %e || Normwise backwar error %e || Componentwise Backward error %e \n',...
-                    ferr(iter),nbe(iter),cbe(iter))
-                display('type continue to proceed')
-                pause;
-                break
-            end
-            sflag=1;
-        end
-    end
-
+    if (([ nbe(iter) ]) <= (u)), break, end
     
     %Compute residual vector
     if precr == 1
@@ -180,12 +159,6 @@ while ~cged
         [d, err, its, ~] = gmres_sd( A, single(zeros(n,1)), single(rd1), LL, U, n, 1, gtol);
     end
 
-    %Compute quantities in bounds for plotting
-    lim(iter) = double( 2*u*cond(mp(double(A),34),'inf')*mu(iter));
-    lim2(iter) = double(2*u*condA);
-    dact = mp(double(A),34)\mp(double(rd1),34);
-    etai(iter) = norm(double(mp(double(d),34)-dact),'inf')/norm(dact,'inf');
-    phi(iter) = min(lim(iter),lim2(iter))+etai(iter);
     
     %Record number of iterations gmres took
     gmresits = [gmresits,its];
@@ -202,10 +175,13 @@ while ~cged
     %Update solution
     if precw == 0
         x = x + fp16(norm_rd)*fp16(d);
+        x1=bInf*C*x;
     elseif precw == 2
         x = x + norm_rd*double(d);
+        x1=bInf*C*x;
     else
         x = x + single(norm_rd)*single(d);
+        x1=bInf*C*x;
     end
     dx = norm(x-xold,'inf')/norm(x,'inf');
     
@@ -217,67 +193,8 @@ while ~cged
     
 end
 
-if ((iter >= iter_max) && (max([ferr(iter) nbe(iter) cbe(iter)]) > u))
+if ((iter >= iter_max) && (([nbe(iter)]) > length(b)*u))
     reqits=Inf;
 end
-
-% 
-% %%%Generate plots
-% % % 
-% % % %%%%%%%%%%Create ferr, nbe, cbe plot
-% fig1 = figure();
-% semilogy(0:iter-1, ferr, '-rx');
-% hold on
-% semilogy(0:iter-1, nbe, '-bo');
-% hold on
-% semilogy(0:iter-1, cbe, '-gv');
-% hold on
-% semilogy(0:iter-1, double(u)*ones(iter,1), '--k');
-% 
-% %%Ensure only integers labeled on x axis
-% atm = get(gca,'xticklabels');
-% m = str2double(atm);
-% xlab = [];
-% num = 1;
-% for i = 1:numel(m)
-%     if ceil(m(i)) == m(i)
-%         xlab(num) = m(i);
-%         num = num + 1;
-%     end
-% end
-% set(gca,'xticklabels',xlab);
-% set(gca,'xtick',xlab);
-% xlabel({'refinement step'},'Interpreter','latex');
-% 
-% str_e = sprintf('%0.1e',kinfA);
-% tt = strcat('GMRES-IR,  $$\, \kappa_{\infty}(A) = ',str_e,', \, (u_f,u,u_r) = $$ (',ufs,',',uws,',',urs,')');
-% title(tt,'Interpreter','latex');
-% 
-% h = legend('ferr','nbe','cbe');
-% set(h,'Interpreter','latex');
-% 
-% %%Create phi plot
-% fig2 = figure();
-% semilogy(0:iter-2, lim, '-cx');
-% hold on
-% semilogy(0:iter-2, lim2, '-+','Color',[1 0.600000023841858 0.200000002980232]);
-% hold on
-% semilogy(0:iter-2, etai, '-mo');
-% hold on
-% semilogy(0:iter-2, phi, '-kv');
-% hold on
-% semilogy(0:iter-1, ones(iter,1), '--k');
-% 
-% %%%%Use same x labels as error plot
-% set(gca,'xticklabels',xlab);
-% set(gca,'xtick',xlab);
-% xlabel({'refinement step'},'Interpreter','latex');
-% 
-% title(tt,'Interpreter','latex');
-%  
-% h = legend('$2u_s \kappa_{\infty}(A)\mu_i$','$2u_s$cond$(A)$', '$u_s \Vert E_i \Vert_\infty$','$\phi_i$');
-% set(h,'Interpreter','latex');
-% 
-% keyboard
 
 end

@@ -1,9 +1,6 @@
 function [ A1 ] = SimpleScaling( A,rmax2,alg )
-% This function performs the simple scaling.
-% A -- Input matrix
-% rmax2 -- effective upper limit of fp16.
-% alg=1 -- replace overflow elements by \xmax
-% alg=2 -- divide by maximum number
+% SIMPLESCALING Scaling by mapping to maximum number, or divide by
+% maximum number.
 
 if (alg==1)    
     %%%% Conversion of the matrix using Algorithm 2.1

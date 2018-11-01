@@ -1,13 +1,22 @@
-Number of GMRES iteration 1 & 5 & 1 & 18 & 8\\ 
-2 & 4 & 2 & 17 & 6\\ 
-3 & 186 & 6 & 87 & 12\\ 
-4 & 74 & 0 & 308 & 21\\ 
-5 & 177 & 0 & 347 & 7\\ 
-6 & 85 & 2 & 179 & 6\\ 
-7 & 1 & 1 & 14 & 7\\ 
-8 & 7 & 2 & 29 & 6\\ 
-9 & 14 & 2 & 92 & 7\\ 
-10 & Inf & 5 & Inf & 9\\ 
-11 & 680 & 7 & 544 & 12\\ 
-12 & 1274 & 6 & 1837 & 15\\ 
-13 & 0 & Inf & 10 & Inf\\ 
+Alg 1 is the algorithm where overflow number are mappex to xmax 
+Alg 2 is the algorithm where we divide the number by xmax 
+Column 1 -- Matrix index 
+Column 2 -- Alg 1 (half,single,double)
+Column 3 -- Alg 2 (half,single,double)
+Column 4 -- Alg 1 (half, double, quad)
+Column 5 -- Alg 2 (half, double, quad)
+
+
+Number of GMRES iteration 1 & 5 (1) & 1 (1) & 18 (3) & 8 (3)\\ 
+2 & 4 (1) & 2 (1) & 17 (3) & 6 (2)\\ 
+3 & 186 (8) & 6 (3) & 87 (4) & 12 (4)\\ 
+4 & 74 (3) & 0 (0) & 308 (4) & 21 (3)\\ 
+5 & 177 (3) & 0 (0) & 347 (4) & 7 (3)\\ 
+6 & 85 (4) & 2 (1) & 179 (4) & 6 (2)\\ 
+7 & 1 (1) & 1 (1) & 14 (3) & 7 (2)\\ 
+8 & 7 (2) & 2 (1) & 29 (4) & 6 (2)\\ 
+9 & 14 (2) & 2 (1) & 92 (4) & 7 (2)\\ 
+10 & Inf (Inf) & 5 (3) & Inf (Inf) & 9 (3)\\ 
+11 & 680 (5) & 7 (4) & 544 (3) & 12 (4)\\ 
+12 & 1274 (5) & 6 (3) & 1837 (5) & 15 (4)\\ 
+13 & 0 (0) & Inf (Inf) & 10 (2) & Inf (Inf)\\ 
