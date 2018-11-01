@@ -43,7 +43,7 @@ if (Scale ==11 || Scale ==12)
         irits = Inf;
     end
     
-else (Scale==2)
+elseif (Scale==2)
     %%% Performs scaling using just algorithm 2.3.
     Cnumber(1,1) = cond(A,inf);
     A_orig = A;

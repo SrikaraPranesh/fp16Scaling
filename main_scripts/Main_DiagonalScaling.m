@@ -23,7 +23,7 @@ prec_set = [1;2];
 %%% mu_flag -- Change mu_flag = 1 to 
 %%% prevent multiplication by (theta_max X xmax)
 %%% in Algorithm 2.3.
-theta = 1;
+theta = 0.1;
 mu = 1;
 global mu_flag;
 mu_flag = 0;

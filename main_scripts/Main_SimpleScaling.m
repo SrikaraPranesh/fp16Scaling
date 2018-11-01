@@ -58,7 +58,7 @@ for prec = 1:2
                 b = randn(n,1);
             end
             
-            [x,gmresits{prec,alg}(i,:),irits{prec,alg}(i,:)] =Scale64To16_Solve(A,b,prec_set(prec,1),...
+            [x,gmresits{prec,alg}(i,:),irits{prec,alg}(i,:)] =scale64to16solve(A,b,prec_set(prec,1),...
                                             maxit,theta,Scale(alg,1),dscale);
                                     
         end
