@@ -1,4 +1,4 @@
-function [x1,reqits,iter] = gmresir3(A,b,precf,precw,precr,iter_max,gtol,A1,b1,C,bInf)
+function [x1,reqits,iter] = gmresir3(A,b,precf,precw,precr,iter_max,gtol,A1,b1,C,R,bInf,mu)
 %GMRESIR3  GMRES-based iterative refinement in three precisions.
 %     x = gmresir3(A,b,precf,precw,precr,iter_max,gtol) solves Ax = b using gmres-based
 %     iterative refinement with at most iter_max ref. steps and GMRES convergence
@@ -67,7 +67,7 @@ else
     mp.Digits(34);
 end
 
-xact = double(mp(double(A),34)\mp(double(b),34));
+xact = double(mp(double(A1),34)\mp(double(b1),34));
 
 %Compute LU factorization
 if precf == 1
@@ -84,7 +84,9 @@ else
     LL = fp16(double(P')*double(L));
     U=fp16(U);
     x =  U\(L\(P*fp16(b)) );
-    x =  norm(b,'inf')*double(x);
+    
+    LL = (1/mu)*diag(1./diag(R))*double(LL);
+    U = double(U)*diag(1./diag(C));
 end
 
 %Compute condition number of A, of preconditioned system At, cond(A), and
@@ -92,14 +94,11 @@ end
 At = double(mp(double(U),34)\(mp(double(L),34)\( mp(double(P),34)*mp(double(A),34))));
 kinfA = cond(mp(double(A),34),'inf');
 kinfAt = cond(mp(double(At),34),'inf');
-condAx = norm(abs(inv(mp(double(A),34)))*abs(mp(double(A),34))*abs(xact),inf)/norm(xact,inf);
-condA = norm(abs(inv(mp(double(A),34)))*abs(mp(double(A),34)),'inf');
 
 %Note: when kinf(A) is large, the initial solution x can have 'Inf's in it
 %If so, default to using 0 as initial solution
 if sum(isinf(single(x)))>0
     x =  zeros(size(b,1),1);
-    x1=C*bInf*x;
     fprintf('**** Warning: x0 contains Inf. Using 0 vector as initial solution.\n')
 end
 
@@ -127,36 +126,37 @@ gmreserr = [];
 while ~cged
     
     %Compute size of errors, quantities in bounds
+    ferr(iter+1) = double(norm(mp(double(x1),34)-mp(xact,34),'inf')/norm(mp(xact,34),'inf'));
     res = double(b1) - double(A1)*double(x1);
     nbe(iter+1) = double(norm(mp(res,34),'inf')/(norm(mp(double(A1),34),'inf')*norm(mp(double(x1),34),'inf')+ norm(mp(double(b1),34),'inf')));
-    nbe(iter+1)=nbe(iter+1)/length(b1);
     
     iter = iter + 1;
     if iter > iter_max, break, end
     
     %Check convergence
-%     if max([ferr(iter) nbe(iter) cbe(iter)]) <= u, break, end
-    if (([ nbe(iter) ]) <= (u)), break, end
+%     if max([ferr(iter) nbe(iter)]) <= (length(b1)*u), break, end
+    if (([ nbe(iter) ]) <= (length(b1)*u)), break, end
     
     %Compute residual vector
     if precr == 1
-        rd = single(b) - single(A)*single(x);
+        rd = single(b1) - single(A1)*single(x1);
     elseif precr == 2
-        rd = double(b) - double(A)*double(x);
+        rd = double(b1) - double(A1)*double(x1);
     else
-        rd = mp(double(b),34) - mp(double(A),34)*mp(double(x),34);
+        rd = mp(double(b1),34) - mp(double(A1),34)*mp(double(x1),34);
     end
     
     %Scale residual vector
     norm_rd = norm(rd,inf);
     rd1 = rd/norm_rd;
+    A11 = A1;
     %Call GMRES to solve for correction term
     if precw == 0
-        [d, err, its, ~] = gmres_hs( A, fp16(zeros(n,1)), fp16(rd1), LL, U, n, 1, gtol);
+        [d, err, its, ~] = gmres_hs( A11, fp16(zeros(n,1)), fp16(rd1), LL, U, n, 1, gtol);
     elseif precw == 2
-        [d, err, its, ~] = gmres_dq( A, zeros(n,1), double(rd1), LL, U, n, 1, gtol);
+        [d, err, its, ~] = gmres_dq( A11, zeros(n,1), double(rd1), LL, U, n, 1, gtol);
     else
-        [d, err, its, ~] = gmres_sd( A, single(zeros(n,1)), single(rd1), LL, U, n, 1, gtol);
+        [d, err, its, ~] = gmres_sd( A11, single(zeros(n,1)), single(rd1), LL, U, n, 1, gtol);
     end
 
     
@@ -170,20 +170,17 @@ while ~cged
     %GMRES (so we can look at convergence trajectories if need be)
     gmreserrvec{iter} = err;
     
-    xold = x;
+    xold = x1;
     
     %Update solution
     if precw == 0
-        x = x + fp16(norm_rd)*fp16(d);
-        x1=bInf*C*x;
+        x1 = x1 + fp16(norm_rd)*fp16(d);
     elseif precw == 2
-        x = x + norm_rd*double(d);
-        x1=bInf*C*x;
+        x1 = x1 + norm_rd*double(d);
     else
-        x = x + single(norm_rd)*single(d);
-        x1=bInf*C*x;
+        x1 = x1 + single(norm_rd)*single(d);
     end
-    dx = norm(x-xold,'inf')/norm(x,'inf');
+    dx = norm(x1-xold,'inf')/norm(x1,'inf');
     
     %Check if dx contains infs, nans, or is 0
     if dx == Inf || isnan(double(dx))
@@ -193,7 +190,8 @@ while ~cged
     
 end
 
-if ((iter >= iter_max) && (([nbe(iter)]) > length(b)*u))
+% if ((iter >= iter_max) && (max([nbe(iter) ferr(iter)]) > length(b)*u))
+if ((iter >= iter_max) && (nbe(iter) > length(b)*u))
     reqits=Inf;
 end
 

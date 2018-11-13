@@ -12,7 +12,7 @@ an Application to Solving Linear Systems
 
 
 ## Requirements
-* The codes have been developed and tested with MATLAB 2014b.
+* The codes have been developed and tested with MATLAB 2018a.
 * This code requires Cleve Laboratory to perform half precision computations and 
 Advanpix Multiprecision Computing Toolbox for extended precision computations. 
 A free trial of Advanpix is available for download from https://www.advanpix.com/.

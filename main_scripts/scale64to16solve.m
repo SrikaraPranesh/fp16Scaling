@@ -30,13 +30,13 @@ end
 if (Scale ==11 || Scale ==12)
     %%% Performs scaling using Algorithm 2.1 and Algorithm 2.2.
     if (Scale==11)
-        A1 = SimpleScaling( A,rmax2,1 );
+        [A1,mu] = SimpleScaling( A,rmax2,1 );
     elseif (Scale==12)
-        A1 = SimpleScaling( A,rmax2,2);
+        [A1,mu] = SimpleScaling( A,rmax2,2);
     end
     Cnumber=cond(double(fp16(A1)),inf);
     if (Cnumber <= 1e20)
-        [x,gmresits,irits] = gmresir3_1(double(A),double(b),0,wp,rp,maxit,tol,A1);
+        [x,gmresits,irits] = gmresir3_1(double(A),double(b),0,wp,rp,maxit,tol,A1,mu);
     else
         x = zeros(length(b),1);
         gmresits = Inf;
@@ -48,14 +48,14 @@ elseif (Scale==2)
     Cnumber(1,1) = cond(A,inf);
     A_orig = A;
     b_orig = b;
-    [ A,b,R,C ] = Diagonal_Scaling( A,b,dscale,rmax2 );
+    [ A,b,R,C,mu] = Diagonal_Scaling( A,b,dscale,rmax2 );
     Cnumber(1,2) = cond(A,inf);
     Cnumber(1,3) = cond(double(fp16(A)),inf);
     bInf = norm(b,'inf');
     b1 = b/bInf;
     if (Cnumber(1,3) <= (1e20) )
         [x,gmresits,irits]=gmresir3(double(A),double(b1),0,wp,rp,maxit,...
-            tol,A_orig,b_orig,C,bInf);
+            tol,A_orig,b_orig,C,R,bInf,mu);
     else
         x = zeros(length(b),1);
         gmresits = Inf;

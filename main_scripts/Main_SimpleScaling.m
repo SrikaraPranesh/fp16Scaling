@@ -45,7 +45,7 @@ for prec = 1:2
         
         for i = 1:length(test_mat)
             load(test_mat{i,1});  %%% Load the required matrix
-            
+            fprintf('I am in matrix number %d \n',i);
             if (prec_set(prec,1)==1)
                 A = Problem.A;
                 A = single(full(A));
@@ -60,7 +60,6 @@ for prec = 1:2
             
             [x,gmresits{prec,alg}(i,:),irits{prec,alg}(i,:)] =scale64to16solve(A,b,prec_set(prec,1),...
                                             maxit,theta,Scale(alg,1),dscale);
-                                    
         end
         
         
@@ -80,13 +79,13 @@ fprintf(fid1,'Column 3 -- Alg 2 (half,single,double)\n');
 fprintf(fid1,'Column 4 -- Alg 1 (half, double, quad)\n');
 fprintf(fid1,'Column 5 -- Alg 2 (half, double, quad)\n');
 fprintf(fid1,'\n'); fprintf(fid1,'\n');
-fprintf(fid1,'Number of GMRES iteration ');
+fprintf(fid1,'Number of GMRES iteration \n');
 for i = 1:length(test_mat)
     t1 = gmresits{1,1}(i,1); t2 = gmresits{1,2}(i,1);
     t11  = irits{1,1}(i,1)-1; t22 = irits{1,2}(i,1)-1;
     t3 = gmresits{2,1}(i,1); t4 = gmresits{2,2}(i,1);
     t33  =  irits{2,1}(i,1)-1; t44 = irits{2,2}(i,1)-1;
-    fprintf(fid1,'%d & %d (%d) & %d (%d) & %d (%d) & %d (%d)\\\\ \n',i,...
+    fprintf(fid1,'%d & %d &(%d) & %d &(%d) & %d &(%d) & %d &(%d)\\\\ \n',i,...
     t1,t11,t2,t22,t3,t33,t4,t44);
 end
 fclose(fid1);

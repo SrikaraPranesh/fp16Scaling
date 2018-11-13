@@ -1,4 +1,4 @@
-function [x,reqits,iter] = gmresir3_1(A,b,precf,precw,precr,iter_max,gtol,A1)
+function [x,reqits,iter] = gmresir3_1(A,b,precf,precw,precr,iter_max,gtol,A1,mu)
 %GMRESIR3  GMRES-based iterative refinement in three precisions.
 %     x = gmresir3(A,b,precf,precw,precr,iter_max,gtol) solves Ax = b using gmres-based
 %     iterative refinement with at most iter_max ref. steps and GMRES convergence
@@ -81,6 +81,7 @@ elseif precf == 2
 else
     B=double(fp16(A1));
     [L,U,P] = lu(B);
+    L = (1/mu)*double(L);
     LL = fp16(double(P')*double(L));
     U=fp16(U);
     x =  U\(L\(P*fp16(b)) );
@@ -123,19 +124,15 @@ while ~cged
     
     %Compute size of errors, quantities in bounds
     ferr(iter+1) = double(norm(mp(double(x),34)-mp(xact,34),'inf')/norm(mp(xact,34),'inf'));
-    mu(iter+1) = norm(double(A)*(mp(double(x),34)-mp(xact,34)),'inf')/(norm(mp(double(A),34),'inf')*norm(mp(double(x),34)-mp(xact,34),'inf'));
     res = double(b) - double(A)*double(x);
     nbe(iter+1) = double(norm(mp(res,34),'inf')/(norm(mp(double(A),34),'inf')*norm(mp(double(x),34),'inf')+ norm(mp(double(b),34),'inf')));
-    temp = double( abs(mp(res,34)) ./ (abs(mp(double(A),34))*abs(mp(double(x),34)) + abs(mp(double(b),34))) );
-    temp(isnan(temp)) = 0; % Set 0/0 to 0.
-    cbe(iter+1) = max(temp);
     
     iter = iter + 1;
     if iter > iter_max, break, end
     
     %Check convergence
 %     if max([ferr(iter) nbe(iter) cbe(iter)]) <= u, break, end
-    if max( nbe(iter)) <= (u), break, end
+    if max( nbe(iter)) <= (length(b)*u), break, end
     
     %Compute residual vector
     if precr == 1
@@ -157,12 +154,7 @@ while ~cged
     else
         [d, err, its, ~] = gmres_sd( A, single(zeros(n,1)), single(rd1), LL, U, n, 1, gtol);
     end
-    %Compute quantities in bounds for plotting
-    lim(iter) = double( 2*u*cond(mp(double(A),34),'inf')*mu(iter));
-    lim2(iter) = double(2*u*condA);
-    dact = mp(double(A),34)\mp(double(rd1),34);
-    etai(iter) = norm(double(mp(double(d),34)-dact),'inf')/norm(dact,'inf');
-    phi(iter) = min(lim(iter),lim2(iter))+etai(iter);
+
     
     %Record number of iterations gmres took
     gmresits = [gmresits,its];
@@ -194,7 +186,7 @@ while ~cged
     
 end
 
-if ((iter >= iter_max) && (max([ferr(iter) nbe(iter) cbe(iter)]) > u))
+if ((iter >= iter_max) && (max([nbe(iter) ]) > (length(b)*u)))
     reqits=Inf;
 end
 

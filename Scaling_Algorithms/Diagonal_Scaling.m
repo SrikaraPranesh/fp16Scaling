@@ -1,4 +1,4 @@
-function [ A,b,R,C ] = Diagonal_Scaling( A,b,dscale,rmax2 )
+function [ A,b,R,C,mu ] = Diagonal_Scaling( A,b,dscale,rmax2 )
 %DIAGONAL_SCALING Performs diagonal scaling and multiplies by 
 %(theta_max X xmax)
 

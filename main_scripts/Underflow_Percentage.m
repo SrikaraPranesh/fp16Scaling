@@ -57,6 +57,7 @@ for prec = 1:2
                 [u1,rmins,rmin,rmax,p] = ieee_params('h');
                 rmax2 = rmax*theta;
             end
+            dnpo(i,1) = denormalpercent(A,rmin,rmins);
             if (alg == 1)
                 [B1,R1,C1] = scale_diag_2side(A);
                 [B2,R2,C2] = scale_diag_2side_symm(A);
@@ -64,8 +65,11 @@ for prec = 1:2
                 B1 = double(fp16(B1));
                 B2 = double(fp16(B2));
                 
-                cnnz{prec,alg}(i,1)=(abs(nnz(A) - nnz(B1))/nnz(A))*100;
-                cnnz{prec,alg}(i,2)=(abs(nnz(A) - nnz(B2))/nnz(A))*100;
+                cnnz{prec,alg}(i,1) = (abs(nnz(A) - nnz(B1))/nnz(A))*100;
+                cnnz{prec,alg}(i,2) = (abs(nnz(A) - nnz(B2))/nnz(A))*100;
+                
+                dnp{prec,alg}(i,1) = denormalpercent(B1,rmin,rmins);
+                dnp{prec,alg}(i,2) = denormalpercent(B2,rmin,rmins);
                 
             elseif (alg == 2)
                 
@@ -77,8 +81,11 @@ for prec = 1:2
                 B1 = double(fp16(mu1*B1));
                 B2 = double(fp16(mu2*B2));
                 
-                cnnz{prec,alg}(i,1)=(abs(nnz(A) - nnz(B1))/nnz(A))*100;
-                cnnz{prec,alg}(i,2)=(abs(nnz(A) - nnz(B2))/nnz(A))*100;
+                cnnz{prec,alg}(i,1) = (abs(nnz(A) - nnz(B1))/nnz(A))*100;
+                cnnz{prec,alg}(i,2) = (abs(nnz(A) - nnz(B2))/nnz(A))*100;
+                
+                dnp{prec,alg}(i,1) = denormalpercent(B1,rmin,rmins);
+                dnp{prec,alg}(i,2) = denormalpercent(B2,rmin,rmins);
                 
             end
 
@@ -99,7 +106,19 @@ for prec = 1:2
     for i=1:length(test_mat)
         t1 = cnnz{prec,1}(i,1); t2 = cnnz{prec,2}(i,1);
         t3 = cnnz{prec,1}(i,2); t4 = cnnz{prec,2}(i,2);
-        fprintf(fid1,'%d & %.2f & %.2f & %.2f & %.2f\\\\ \n',i,...
+        fprintf(fid1,'%d & %.2f & %.2f & %.2f & %.2f \\\\ \n',i,...
+            t1,t2,t3,t4);
+    end
+    fprintf(fid1,'\n'); fprintf(fid1,'\n');
+end
+
+for prec = 1:2
+    fprintf(fid1,'Percentage of subnormal numbers in %d \n',alg,prec);
+    for i=1:length(test_mat)
+        t = dnpo(i,1);
+        t1 = dnp{prec,1}(i,1); t2 = dnp{prec,2}(i,1);
+        t3 = dnp{prec,1}(i,2); t4 = dnp{prec,2}(i,2);
+        fprintf(fid1,'%d & %.2f & %.2f & %.2f & %.2f & %.2f \\\\ \n',i,t,...
             t1,t2,t3,t4);
     end
     fprintf(fid1,'\n'); fprintf(fid1,'\n');

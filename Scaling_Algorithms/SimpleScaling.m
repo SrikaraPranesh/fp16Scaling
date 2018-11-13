@@ -1,4 +1,4 @@
-function [ A1 ] = SimpleScaling( A,rmax2,alg )
+function [ A1,mu ] = SimpleScaling( A,rmax2,alg )
 % SIMPLESCALING Scaling by mapping to maximum number, or divide by
 % maximum number.
 
@@ -14,6 +14,7 @@ if (alg==1)
             end
         end
     end
+    mu = 1;
 elseif (alg==2)
     %%%% Conversion of the matrix using Algorithm 2.2
     A1 = zeros(length(A));
