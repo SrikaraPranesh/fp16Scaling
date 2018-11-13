@@ -1,0 +1,23 @@
+Alg 1 is the algorithm where overflow number are mappex to xmax 
+Alg 2 is the algorithm where we divide the number by xmax 
+Column 1 -- Matrix index 
+Column 2 -- Alg 1 (half,single,double)
+Column 3 -- Alg 2 (half,single,double)
+Column 4 -- Alg 1 (half, double, quad)
+Column 5 -- Alg 2 (half, double, quad)
+
+
+Number of GMRES iteration 
+1 & 5 &(1) & 1 &(1) & 18 &(3) & 5 &(2)\\ 
+2 & 4 &(1) & 2 &(1) & 11 &(2) & 6 &(2)\\ 
+3 & 37 &(3) & 2 &(1) & 58 &(3) & 9 &(3)\\ 
+4 & 24 &(2) & 0 &(0) & 208 &(3) & 15 &(2)\\ 
+5 & 100 &(2) & 0 &(0) & 257 &(3) & 4 &(2)\\ 
+6 & 37 &(3) & 0 &(0) & 117 &(3) & 80 &(0)\\ 
+7 & 1 &(1) & 1 &(1) & 14 &(3) & 5 &(2)\\ 
+8 & 0 &(0) & 0 &(0) & 20 &(3) & 7 &(2)\\ 
+9 & 0 &(0) & 0 &(0) & 63 &(3) & 3 &(1)\\ 
+10 & Inf &(Inf) & 0 &(0) & Inf &(Inf) & 8 &(3)\\ 
+11 & 229 &(3) & 237 &(0) & 544 &(3) & 237 &(0)\\ 
+12 & 459 &(3) & 2 &(1) & 1391 &(4) & 11 &(3)\\ 
+13 & 0 &(0) & Inf &(Inf) & 10 &(2) & Inf &(Inf)\\ 
