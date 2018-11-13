@@ -131,7 +131,7 @@ while ~cged
     if iter > iter_max, break, end
     
     %Check convergence
-%     if max([ferr(iter) nbe(iter) cbe(iter)]) <= u, break, end
+%     if max([ferr(iter) nbe(iter)]) <= (length(b)*u), break, end
     if max( nbe(iter)) <= (length(b)*u), break, end
     
     %Compute residual vector
@@ -186,64 +186,10 @@ while ~cged
     
 end
 
+% if ((iter >= iter_max) && (max([nbe(iter) ferr(iter)]) > length(b)*u))
 if ((iter >= iter_max) && (max([nbe(iter) ]) > (length(b)*u)))
     reqits=Inf;
 end
 
-%%%%Generate plots
-
-%%%%Create ferr, nbe, cbe plot
-% fig1 = figure();
-% semilogy(0:iter-1, ferr, '-rx');
-% hold on
-% semilogy(0:iter-1, nbe, '-bo');
-% hold on
-% semilogy(0:iter-1, cbe, '-gv');
-% hold on
-% semilogy(0:iter-1, double(u)*ones(iter,1), '--k');
-%
-% %%%Ensure only integers labeled on x axis
-% atm = get(gca,'xticklabels');
-% m = str2double(atm);
-% xlab = [];
-% num = 1;
-% for i = 1:numel(m)
-%     if ceil(m(i)) == m(i)
-%         xlab(num) = m(i);
-%         num = num + 1;
-%     end
-% end
-% set(gca,'xticklabels',xlab);
-% set(gca,'xtick',xlab);
-% xlabel({'refinement step'},'Interpreter','latex');
-%
-% str_e = sprintf('%0.1e',kinfA);
-% tt = strcat('GMRES-IR,  $$\, \kappa_{\infty}(A) = ',str_e,', \, (u_f,u,u_r) = $$ (',ufs,',',uws,',',urs,')');
-% title(tt,'Interpreter','latex');
-%
-% h = legend('ferr','nbe','cbe');
-% set(h,'Interpreter','latex');
-%
-% %%%Create phi plot
-% fig2 = figure();
-% semilogy(0:iter-2, lim, '-cx');
-% hold on
-% semilogy(0:iter-2, lim2, '-+','Color',[1 0.600000023841858 0.200000002980232]);
-% hold on
-% semilogy(0:iter-2, etai, '-mo');
-% hold on
-% semilogy(0:iter-2, phi, '-kv');
-% hold on
-% semilogy(0:iter-1, ones(iter,1), '--k');
-%
-% %%%%%Use same x labels as error plot
-% set(gca,'xticklabels',xlab);
-% set(gca,'xtick',xlab);
-% xlabel({'refinement step'},'Interpreter','latex');
-%
-% title(tt,'Interpreter','latex');
-%
-% h = legend('$2u_s \kappa_{\infty}(A)\mu_i$','$2u_s$cond$(A)$', '$u_s \Vert E_i \Vert_\infty$','$\phi_i$');
-% set(h,'Interpreter','latex');
 
 end
