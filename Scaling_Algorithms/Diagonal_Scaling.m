@@ -6,10 +6,12 @@ global mu_flag;
 
 if (dscale==1)
     [A,R,C] = scale_diag_2side(A);
+%     %%%% Hungarian scaling
+%     [P, u, v] = hungpair(A);
+%     R = diag(1./v); C = diag(1./u);
+%     A = R*A*C;
 elseif (dscale==2)
     [A,R,C] = scale_diag_2side_symm(A);
-elseif (dscale==3)
-    [A,R,C] = scale_diag_2side_symm_gm(A);
 end
 beta = max(max(A));
 mu = rmax2/beta;

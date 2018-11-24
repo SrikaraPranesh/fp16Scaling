@@ -2,6 +2,10 @@
 MATLAB codes for scaling a matrix given in fp64 or fp32
 into fp16, and using the scaled matrix to solve system
 of linear equations using GMRES based iterative refinement.
+A modified version of GMRES-based iterative refinement 
+has been used in these codes. The orignal codes
+for GMRES-based iterative refinement can be downloaded
+from https://github.com/eccarson. 
 
 ## Related publications
 * N. J. Higham, S. Pranesh, M. Zounon. Squeezing a Matrix Into Half Precision, with 

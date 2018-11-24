@@ -42,6 +42,7 @@ maxit = 10;
 %%%           2.3 
 dscale = [1;2];
 
+
 for prec = 1:2
     for alg = 1:2
         for i = 1:length(test_mat)
@@ -61,14 +62,12 @@ for prec = 1:2
             %%% Call the linear system solver
             [x,gmresits{prec,alg}(i,1),irits{prec,alg}(i,1)] = scale64to16solve(A,b,prec_set(prec,1)...
                 ,maxit,theta,Scale,dscale(alg,1));
-            
             %%% Compute the normwise backward error
             res = double(b) - double(A)*double(x);
             nbe{prec,alg}(i,1) = double(norm(mp(res,34),'inf')/(length(res)*(norm(mp(double(A),34),'inf')*norm(mp(double(x),34),'inf')+ norm(mp(double(b),34),'inf'))));
         end  
     end
 end
-
 
 %%%%%%% PRINT THE LATEX TABLE INTO A FILE %%%%%%%
 
@@ -86,7 +85,7 @@ for i = 1:length(test_mat)
     t11  = irits{1,1}(i,1)-1; t22 = irits{1,2}(i,1)-1;
     t3  =  gmresits{2,1}(i,1); t4 = gmresits{2,2}(i,1);
     t33  =  irits{2,1}(i,1)-1; t44 = irits{2,2}(i,1)-1;
-    fprintf(fid1,'%d & %d (%d) & %d (%d) & %d (%d) & %d (%d)\\\\ \n',i,...
+    fprintf(fid1,'%d & %d &(%d) & %d &(%d) & %d &(%d) & %d &(%d)\\\\ \n',i,...
         t1,t11,t2,t22,t3,t33,t4,t44);
 end
 

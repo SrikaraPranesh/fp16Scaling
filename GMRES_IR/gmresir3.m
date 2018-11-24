@@ -83,10 +83,24 @@ else
     [L,U,P] = lu(B);
     LL = fp16(double(P')*double(L));
     U=fp16(U);
-    x =  U\(L\(P*fp16(b)) );
+    x =  U\(LL\(fp16(b)) );
     
     LL = (1/mu)*diag(1./diag(R))*double(LL);
     U = double(U)*diag(1./diag(C));
+    
+%%%% Uncomment this if you want to use
+%%%% fp16 LU using Cleve's lutx.m. It 
+%%%% is extremely slow and the answer will
+%%%% not change. 
+%     [L,U,p] = lu(fp16(A));
+%     p = double(p);
+%     I = (eye(n)); P = I(p,:);
+%     L = double(L); U = double(U);
+%     LL = (double(P')*double(L));
+%     x =  U\(L\(P*fp16(b)) );
+%     
+%     LL = (1/mu)*diag(1./diag(R))*double(LL);
+%     U = double(U)*diag(1./diag(C));
 end
 
 %Compute condition number of A, of preconditioned system At, cond(A), and
@@ -122,7 +136,6 @@ gmresits = [];
 reqits=0;
 %Array to store final relative (preconditioned) residual norm in gmres
 gmreserr = [];
-
 while ~cged
     
     %Compute size of errors, quantities in bounds
@@ -135,6 +148,7 @@ while ~cged
     
     %Check convergence
 %     if max([ferr(iter) nbe(iter)]) <= (length(b1)*u), break, end
+
     if (([ nbe(iter) ]) <= (length(b1)*u)), break, end
     
     %Compute residual vector
