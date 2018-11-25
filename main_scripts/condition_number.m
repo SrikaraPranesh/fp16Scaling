@@ -57,19 +57,19 @@ for prec = 2:2
             Cnumber{prec,alg}(i,2) = cond(A,inf);
             B = double(fp16(A));
             Cnumber{prec,alg}(i,3) = cond(B,inf);
-            [L,U] = lu(B);
-            L = fp16(L);
-            U = fp16(U);
+%             [L,U] = lu(B);
+%             L = fp16(L);
+%             U = fp16(U);
             
 %%%% Uncomment this if you want to use
 %%%% fp16 LU using Cleve's lutx.m. It 
 %%%% is extremely slow and the answer will
 %%%% not change.
-%             [L,U,p] = lu(fp16(A));
-%             p = double(p);
-%             I = (eye(n)); P = I(p,:);
-%             U = double(U);
-%             L = (double(P')*double(L));
+            [L,U,p] = lu(fp16(A));
+            p = double(p);
+            I = (eye(n)); P = I(p,:);
+            U = double(U);
+            L = (double(P')*double(L));
             
             L = diag(1./diag(R))*double(L);
             U = double(U)*diag(1./diag(C));

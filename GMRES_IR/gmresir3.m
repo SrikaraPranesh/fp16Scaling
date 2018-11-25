@@ -79,28 +79,28 @@ elseif precf == 2
     LL = double(double(P')*double(L));
     x =  U\(L\(P*double(b)) );
 else
-    B=double(fp16(A));
-    [L,U,P] = lu(B);
-    LL = fp16(double(P')*double(L));
-    U=fp16(U);
-    x =  U\(LL\(fp16(b)) );
-    
-    LL = (1/mu)*diag(1./diag(R))*double(LL);
-    U = double(U)*diag(1./diag(C));
+%     B=double(fp16(A));
+%     [L,U,P] = lu(B);
+%     LL = fp16(double(P')*double(L));
+%     U=fp16(U);
+%     x =  U\(LL\(fp16(b)) );
+%     
+%     LL = (1/mu)*diag(1./diag(R))*double(LL);
+%     U = double(U)*diag(1./diag(C));
     
 %%%% Uncomment this if you want to use
 %%%% fp16 LU using Cleve's lutx.m. It 
 %%%% is extremely slow and the answer will
 %%%% not change. 
-%     [L,U,p] = lu(fp16(A));
-%     p = double(p);
-%     I = (eye(n)); P = I(p,:);
-%     L = double(L); U = double(U);
-%     LL = (double(P')*double(L));
-%     x =  U\(L\(P*fp16(b)) );
-%     
-%     LL = (1/mu)*diag(1./diag(R))*double(LL);
-%     U = double(U)*diag(1./diag(C));
+    [L,U,p] = lu(fp16(A));
+    p = double(p);
+    I = (eye(n)); P = I(p,:);
+    L = double(L); U = double(U);
+    LL = (double(P')*double(L));
+    x =  U\(L\(P*fp16(b)) );
+    
+    LL = (1/mu)*diag(1./diag(R))*double(LL);
+    U = double(U)*diag(1./diag(C));
 end
 
 %Compute condition number of A, of preconditioned system At, cond(A), and
