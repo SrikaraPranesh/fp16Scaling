@@ -15,11 +15,12 @@ addpath('main_scripts')
 
 
 Main_SimpleScaling;
+keyboard
 Main_DiagonalScaling;
 condition_number;
 Underflow_Percentage
 
 
 movefile('*.txt','results')
-
+movefile('*.mat','results')
 

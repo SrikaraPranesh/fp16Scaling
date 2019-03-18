@@ -34,9 +34,9 @@ Scale = [11;12] ;
 maxit = 10;
 
 %%% dscale=1, uses Algorithm 2.4 as diagonal scaling in either Algorithm
-%%%           2.3 
+%%%           2.3
 %%% dscale=2, uses Algorithm 2.5 as diagonal scaling in either Algorithm
-%%%           2.3 
+%%%           2.3
 dscale = [1;2];
 
 for prec = 1:2
@@ -58,14 +58,17 @@ for prec = 1:2
                 b = randn(n,1);
             end
             
-            [x,gmresits{prec,alg}(i,:),irits{prec,alg}(i,:)] =scale64to16solve(A,b,prec_set(prec,1),...
-                                            maxit,theta,Scale(alg,1),dscale);
+            [x,gmresits{prec,alg}(i,:),irits{prec,alg}(i,:),app_err_simp{prec,alg}(i,1)] = ...
+                scale64to16solve(A,b,prec_set(prec,1),maxit,theta,Scale(alg,1),dscale);
+            %%% Compute the normwise backward error
+            res{prec,alg}(i,1) = norm(double(b) - double(A)*double(x),'inf');
+            denom{prec,alg}(i,1) = length(b)*(norm(mp(double(A),34),'inf')*norm(mp(double(x),34),'inf'));
         end
-        
         
     end
 end
 
+save approx_err_simple app_err_simp
 
 %%%%%%% PRINT THE LATEX TABLE INTO A FILE %%%%%%%
 
@@ -86,7 +89,21 @@ for i = 1:length(test_mat)
     t3 = gmresits{2,1}(i,1); t4 = gmresits{2,2}(i,1);
     t33  =  irits{2,1}(i,1)-1; t44 = irits{2,2}(i,1)-1;
     fprintf(fid1,'%d & %d &(%d) & %d &(%d) & %d &(%d) & %d &(%d)\\\\ \n',i,...
-    t1,t11,t2,t22,t3,t33,t4,t44);
+        t1,t11,t2,t22,t3,t33,t4,t44);
+end
+
+fprintf(fid1,'\n');
+fprintf(fid1,'\n');
+fprintf(fid1,'backward errors \n');
+fprintf(fid1,'Columns 2 and 3 are (half,single,double) \n');
+fprintf(fid1,'Columns 4 and 5 are (half,double,quad) \n');
+for i = 1:length(test_mat)
+    t1 = res{1,1}(i,1); t2 = res{1,2}(i,1);
+    t3 = res{2,1}(i,1); t4 = res{2,2}(i,1);
+    t11 = denom{1,1}(i,1); t22 = denom{1,2}(i,1);
+    t33 = denom{2,1}(i,1); t44 = denom{2,2}(i,1);
+    fprintf(fid1,'%d & %6.2e (%6.2e) & %6.2e (%6.2e) & %6.2e (%6.2e) & %6.2e (%6.2e)\\\\ \n',i,...
+        t1,t11,t2,t22,t3,t33,t4,t44);
 end
 fclose(fid1);
 

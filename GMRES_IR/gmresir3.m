@@ -1,4 +1,4 @@
-function [x1,reqits,iter] = gmresir3(A,b,precf,precw,precr,iter_max,gtol,A1,b1,C,R,bInf,mu)
+function [x1,reqits,iter,app_err] = gmresir3(A,b,precf,precw,precr,iter_max,gtol,A1,b1,C,R,bInf,mu)
 %GMRESIR3  GMRES-based iterative refinement in three precisions.
 %     x = gmresir3(A,b,precf,precw,precr,iter_max,gtol) solves Ax = b using gmres-based
 %     iterative refinement with at most iter_max ref. steps and GMRES convergence
@@ -79,6 +79,7 @@ elseif precf == 2
     LL = double(double(P')*double(L));
     x =  U\(L\(P*double(b)) );
 else
+
 %     B=double(fp16(A));
 %     [L,U,P] = lu(B);
 %     LL = fp16(double(P')*double(L));
@@ -95,12 +96,12 @@ else
     [L,U,p] = lu(fp16(A));
     p = double(p);
     I = (eye(n)); P = I(p,:);
-    L = double(L); U = double(U);
-    LL = (double(P')*double(L));
     x =  U\(L\(P*fp16(b)) );
-    
+    L = double(L); U = double(U);
+    LL = (double(P')*double(L));  
     LL = (1/mu)*diag(1./diag(R))*double(LL);
     U = double(U)*diag(1./diag(C));
+    app_err = norm((A1-double(LL*U)),inf)/norm(A1,inf);
 end
 
 %Compute condition number of A, of preconditioned system At, cond(A), and

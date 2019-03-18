@@ -60,14 +60,17 @@ for prec = 1:2
                 b = randn(n,1);
             end
             %%% Call the linear system solver
-            [x,gmresits{prec,alg}(i,1),irits{prec,alg}(i,1)] = scale64to16solve(A,b,prec_set(prec,1)...
+            [x,gmresits{prec,alg}(i,1),irits{prec,alg}(i,1),app_err_diag{prec,alg}(i,1)] = scale64to16solve(A,b,prec_set(prec,1)...
                 ,maxit,theta,Scale,dscale(alg,1));
             %%% Compute the normwise backward error
-            res = double(b) - double(A)*double(x);
-            nbe{prec,alg}(i,1) = double(norm(mp(res,34),'inf')/(length(res)*(norm(mp(double(A),34),'inf')*norm(mp(double(x),34),'inf')+ norm(mp(double(b),34),'inf'))));
+            res{prec,alg}(i,1) = norm(double(b) - double(A)*double(x),'inf');
+            denom{prec,alg}(i,1) = length(b)*(norm(mp(double(A),34),'inf')*norm(mp(double(x),34),'inf'));
+%             nbe{prec,alg}(i,1) = double(norm(mp(res,34),'inf')/(length(res)*(norm(mp(double(A),34),'inf')*norm(mp(double(x),34),'inf')+ norm(mp(double(b),34),'inf'))));
         end  
     end
 end
+
+save approx_err_diag app_err_diag
 
 %%%%%%% PRINT THE LATEX TABLE INTO A FILE %%%%%%%
 
@@ -95,10 +98,12 @@ fprintf(fid1,'backward errors \n');
 fprintf(fid1,'Columns 2 and 3 are (half,single,double) \n');
 fprintf(fid1,'Columns 4 and 5 are (half,double,quad) \n');
 for i = 1:length(test_mat)
-    t1 = nbe{1,1}(i,1); t2 = nbe{1,2}(i,1);
-    t3 = nbe{2,1}(i,1); t4 = nbe{2,2}(i,1);
-    fprintf(fid1,'%d & %6.2e & %6.2e & %6.2e & %6.2e\\\\ \n',i,...
-        t1,t2,t3,t4);
+    t1 = res{1,1}(i,1); t2 = res{1,2}(i,1);
+    t3 = res{2,1}(i,1); t4 = res{2,2}(i,1);
+    t11 = denom{1,1}(i,1); t22 = denom{1,2}(i,1);
+    t33 = denom{2,1}(i,1); t44 = denom{2,2}(i,1);
+    fprintf(fid1,'%d & %6.2e (%6.2e) & %6.2e (%6.2e) & %6.2e (%6.2e) & %6.2e (%6.2e)\\\\ \n',i,...
+        t1,t11,t2,t22,t3,t33,t4,t44);
 end
 
 fclose(fid1);

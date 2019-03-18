@@ -26,7 +26,7 @@ dscale = [1;2];
 
 
 %%%%% condtion number of diagonal scaling algorithms
-for prec = 2:2
+for prec = 1:2
     for alg = 1:2
         for i = 1:length(test_mat)
             
@@ -88,7 +88,7 @@ fprintf(fid1,'algorithm 1 -- Un Symmetric diagonal scaling \n');
 fprintf(fid1,'algorithm 2 -- Symmetric diagonal scaling \n');
 fprintf(fid1,'\n'); fprintf(fid1,'\n');
 
-for prec = 2:2        
+for prec = 1:2        
         fprintf(fid1,'Condition numbers diagonal scaling algorithm %d for precision %d \n',alg,prec);
         for i=1:length(test_mat)
             t1 = Cnumber{prec,1}(i,1); t2 = Cnumber{prec,1}(i,2);
@@ -99,4 +99,21 @@ for prec = 2:2
         end
         fprintf(fid1,'\n'); fprintf(fid1,'\n');
 end
+
+load approx_err_simple app_err_simp
+load approx_err_diag app_err_diag
+% Print the approximation error into a file
+fprintf(fid1,'\n'); fprintf(fid1,'\n');
+for prec = 1:2
+        fprintf(fid1,'Precision %d \n',prec);
+        for i=1:length(test_mat)
+            t1 = app_err_simp{prec,1}(i,1); t2 = app_err_simp{prec,2}(i,1);
+            t3 = app_err_diag{prec,1}(i,1); t4 = app_err_diag{prec,2}(i,1);
+            fprintf(fid1,'%d & %6.2e & %6.2e & %6.2e & %6.2e\\\\ \n',i,...
+                t1,t2,t3,t4);
+        end
+        fprintf(fid1,'\n'); fprintf(fid1,'\n');
+end
+
+
 fclose(fid1);

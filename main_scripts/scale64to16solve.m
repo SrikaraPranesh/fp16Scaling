@@ -1,4 +1,4 @@
-function [x,gmresits,irits,Cnumber] = scale64to16solve(A,b,sf,maxit,theta,Scale,dscale)
+function [x,gmresits,irits,app_err] = scale64to16solve(A,b,sf,maxit,theta,Scale,dscale)
 %SCALE64TO16SOLVE  Solution of linear system of equation using scaling and
 %GMRES based iterative refinement
 %     x = scale64to16solve(A,b,sf,maxit,theta,Scale,dscale) Solves a system 
@@ -36,11 +36,12 @@ if (Scale ==11 || Scale ==12)
     end
     Cnumber=cond(double(fp16(A1)),inf);
     if (Cnumber <= 1e20)
-        [x,gmresits,irits] = gmresir3_1(double(A),double(b),0,wp,rp,maxit,tol,A1,mu);
+        [x,gmresits,irits,app_err] = gmresir3_1(double(A),double(b),0,wp,rp,maxit,tol,A1,mu);
     else
         x = zeros(length(b),1);
         gmresits = Inf;
         irits = Inf;
+        app_err = Inf;
     end
     
 elseif (Scale==2)
@@ -54,12 +55,13 @@ elseif (Scale==2)
     bInf = norm(b,'inf');
     b1 = b/bInf;
     if (Cnumber(1,3) <= (1e20) )
-        [x,gmresits,irits]=gmresir3(double(A),double(b1),0,wp,rp,maxit,...
+        [x,gmresits,irits,app_err]=gmresir3(double(A),double(b1),0,wp,rp,maxit,...
             tol,A_orig,b_orig,C,R,bInf,mu);
     else
         x = zeros(length(b),1);
         gmresits = Inf;
         irits = Inf;
+        app_err = Inf;
     end
         
 end
